@@ -56,6 +56,7 @@ export interface LaunchRequestArguments extends DebugProtocol.LaunchRequestArgum
     envFile: string;
     exceptionHandling?: ExceptionHandling;
     console?: "none" | "integratedTerminal" | "externalTerminal";
+    noCheck?: boolean;
 }
 
 export interface AttachRequestArguments extends DebugProtocol.AttachRequestArguments {

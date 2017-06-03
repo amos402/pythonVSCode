@@ -21,6 +21,7 @@ import { DjangoApp, LaunchRequestArguments, AttachRequestArguments, DebugFlags, 
 import * as telemetryContracts from "../common/telemetryContracts";
 import { validatePath, validatePathSync, getPythonExecutable } from './Common/Utils';
 import { isNotInstalledError } from '../common/helpers';
+import * as untildify from 'untildify';
 
 const CHILD_ENUMEARATION_TIMEOUT = 5000;
 
@@ -196,10 +197,14 @@ export class PythonDebugger extends DebugSession {
     protected launchRequest(response: DebugProtocol.LaunchResponse, args: LaunchRequestArguments): void {
         // Add support for specifying just the directory where the python executable will be located
         // E.g. virtual directory name
-        try {
-            args.pythonPath = getPythonExecutable(args.pythonPath);
-        }
-        catch (ex) {
+        if (args.noCheck){
+            args.pythonPath = untildify(args.pythonPath);
+        }else {
+            try {
+                args.pythonPath = getPythonExecutable(args.pythonPath);
+            }
+            catch (ex) {
+            }
         }
         if (Array.isArray(args.debugOptions) && args.debugOptions.indexOf("Pyramid") >= 0) {
             if (fs.existsSync(args.pythonPath)) {
